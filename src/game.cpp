@@ -22,11 +22,24 @@ int main(int argc, char **argv) {
 
     const BH::Text text("Hello World!", screenWidth / 2, screenHeight / 2, 32);
 
+    raylib::Camera3D camera;
+    camera.SetPosition(Vector3(5, 5, 5));
+    camera.SetTarget(Vector3(0, 0, 0));
+    camera.SetUp(Vector3(0, 1, 0));
+    camera.SetFovy(90);
+    camera.SetProjection(CameraProjection::CAMERA_PERSPECTIVE);
+
     while (!window->ShouldClose()) {
+        UpdateCamera(&camera, CameraMode::CAMERA_CUSTOM);
+
         window->BeginDrawing();
         window->ClearBackground(RAYWHITE);
 
-        text.DrawCenter();
+        BeginMode3D(camera);
+        DrawCube(Vector3(0, -10, 0), 20, 1, 20, BLUE);
+        DrawCube(Vector3(3, -4, -2), 2, 2, 2, GREEN);
+        DrawCube(Vector3(-2, -4, 0), 1, 1, 1, RED);
+        EndMode3D();
 
         window->EndDrawing();
     }
