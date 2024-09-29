@@ -11,11 +11,9 @@
 int screenWidth = 800;
 int screenHeight = 450;
 
-void UpdateDrawFrame(void);     // Update and Draw one frame
-
-int main()
-{
-    std::unique_ptr<raylib::Window> window = std::make_unique<raylib::Window>(screenWidth, screenHeight, "Boom Headsht");
+int main(int argc, char **argv) {
+    const auto window = std::make_unique<raylib::Window>(
+        screenWidth, screenHeight, "Boom Headshot");
 
 #if defined(PLATFORM_WEB)
     emscripten_set_main_loop(UpdateDrawFrame, 0, 1);
@@ -24,10 +22,8 @@ int main()
 
     const BH::Text text("Hello World!", screenWidth / 2, screenHeight / 2, 32);
 
-    while (!window->ShouldClose())
-    {
+    while (!window->ShouldClose()) {
         window->BeginDrawing();
-
         window->ClearBackground(RAYWHITE);
 
         text.DrawCenter();
