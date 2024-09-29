@@ -1,4 +1,8 @@
-#include "raylib-cpp.hpp"
+#include <raylib-cpp.hpp>
+
+#include <memory>
+
+#include "text.hpp"
 
 #if defined(PLATFORM_WEB)
 #include <emscripten/emscripten.h>
@@ -11,22 +15,24 @@ void UpdateDrawFrame(void);     // Update and Draw one frame
 
 int main()
 {
-    raylib::Window window(screenWidth, screenHeight, "Boom Headsht");
+    std::unique_ptr<raylib::Window> window = std::make_unique<raylib::Window>(screenWidth, screenHeight, "Boom Headsht");
 
 #if defined(PLATFORM_WEB)
     emscripten_set_main_loop(UpdateDrawFrame, 0, 1);
 #else
     SetTargetFPS(60);
 
-    while (!window.ShouldClose())
+    const BH::Text text("Hello World!", screenWidth / 2, screenHeight / 2, 32);
+
+    while (!window->ShouldClose())
     {
-        BeginDrawing();
+        window->BeginDrawing();
 
-        ClearBackground(RAYWHITE);
+        window->ClearBackground(RAYWHITE);
 
-        DrawText("Hello World!", screenWidth / 2 - 16, screenHeight / 2 - 16, 32, BLACK);
+        text.DrawCenter();
 
-        EndDrawing();
+        window->EndDrawing();
     }
 #endif
 
