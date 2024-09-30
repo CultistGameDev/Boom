@@ -27,7 +27,7 @@ template <typename T, size_t N> class Vec {
         return m_Values[i];
     }
 
-    T *GetData() noexcept { return m_Values.data(); }
+    T *Data() noexcept { return m_Values.data(); }
 
   protected:
     std::array<T, N> m_Values;
@@ -71,7 +71,7 @@ template <typename T> class Vec3 : public Vec<T, 3> {
     T B(T value) { return this->m_Values[2] = value; }
 };
 
-template <typename T> class Vec4 : public Vec<T, 2> {
+template <typename T> class Vec4 : public Vec<T, 4> {
   public:
     Vec4() : Vec<T, 4>() {}
     Vec4(T x, T y, T z, T w) : Vec<T, 4>({x, y, z, w}) {}
