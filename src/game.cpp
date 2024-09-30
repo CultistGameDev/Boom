@@ -59,8 +59,12 @@ int main(int argc, char **argv) {
     camera.SetFovy(90);
     camera.SetProjection(CameraProjection::CAMERA_PERSPECTIVE);
 
+    bool showMessageBox = true;
+
     while (!window->ShouldClose()) {
-        // UpdateCamera(&camera, CameraMode::CAMERA_CUSTOM);
+        if (!showMessageBox) {
+            UpdateCamera(&camera, CameraMode::CAMERA_CUSTOM);
+        }
 
         window->BeginDrawing();
         window->ClearBackground(WHITE);
@@ -71,9 +75,14 @@ int main(int argc, char **argv) {
         DrawCube(Vector3(-2, -4, 0), 1, 1, 1, RED);
         EndMode3D();
 
-        GuiMessageBox((Rectangle){85, 70, 250.0f, 100.0f}, "#191#Message Box",
-                      "Hi! This is a message!", "Nice;Cool");
-
+        if (showMessageBox) {
+            if (GuiMessageBox((Rectangle){85, 70, 250.0f, 100.0f},
+                          "#191#Message Box", "Hi! This is a message!",
+                          "Nice;Cool") >= 0) {
+                showMessageBox = false;
+                DisableCursor();
+            }
+        }
         window->DrawFPS();
 
         window->EndDrawing();
