@@ -38,8 +38,10 @@ static float TextToFloat(const char *text) {
 #include <emscripten/emscripten.h>
 #endif
 
-int screenWidth = 800;
-int screenHeight = 450;
+#include "vector.hpp"
+
+constexpr int screenWidth = 800;
+constexpr int screenHeight = 450;
 
 int main(int argc, char **argv) {
     const auto window = std::make_unique<raylib::Window>(
@@ -50,7 +52,8 @@ int main(int argc, char **argv) {
 #else
     SetTargetFPS(60);
 
-    const BH::Text text("Hello World!", screenWidth / 2, screenHeight / 2, 32);
+    BH::Vec2f v(0.1f, 1.2f);
+    v.X(2.4f);
 
     raylib::Camera3D camera;
     camera.SetPosition(Vector3(5, 5, 5));
