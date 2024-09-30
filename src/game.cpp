@@ -1,3 +1,5 @@
+#include <array>
+
 #include <raylib-cpp.hpp>
 
 static float TextToFloat(const char *text) {
@@ -62,6 +64,13 @@ int main(int argc, char **argv) {
     camera.SetFovy(90);
     camera.SetProjection(CameraProjection::CAMERA_PERSPECTIVE);
 
+    std::array<float, 4> ambient{0.1f, 0.1f, 0.1f, 1.0f};
+
+    Shader shader =
+        LoadShader("data/shaders/lighting.vert", "data/shaders/lighting.frag");
+    int ambientLoc = GetShaderLocation(shader, "ambient");
+    SetShaderValue(shader, ambientLoc, ambient.data(), SHADER_UNIFORM_VEC4);
+
     bool showMessageBox = true;
 
     while (!window->ShouldClose()) {
@@ -73,24 +82,30 @@ int main(int argc, char **argv) {
         window->ClearBackground(WHITE);
 
         BeginMode3D(camera);
+        BeginShaderMode(shader);
         DrawCube(Vector3(0, -10, 0), 20, 1, 20, BLUE);
         DrawCube(Vector3(3, -4, -2), 2, 2, 2, GREEN);
         DrawCube(Vector3(-2, -4, 0), 1, 1, 1, RED);
+        EndShaderMode();
         EndMode3D();
 
         if (showMessageBox) {
             if (GuiMessageBox((Rectangle){85, 70, 250.0f, 100.0f},
-                          "#191#Message Box", "Hi! This is a message!",
-                          "Nice;Cool") >= 0) {
+                              "#191#Message Box", "Hi! This is a message!",
+                              "Nice;Cool") >= 0) {
                 showMessageBox = false;
                 DisableCursor();
             }
         }
-        window->DrawFPS();
+
+        DrawText(TextFormat("%.1f %.1f", v.X(), v.Y()), 0, 0, 32, BLACK);
 
         window->EndDrawing();
     }
 #endif
+
+    UnloadShader(shader);
+    window->Close();
 
     return 0;
 }

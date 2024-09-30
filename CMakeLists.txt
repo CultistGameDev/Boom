@@ -52,17 +52,15 @@ set_property(TARGET ${PROJECT_NAME} PROPERTY VS_DEBUGGER_WORKING_DIRECTORY $<TAR
 set_property(TARGET ${PROJECT_NAME} PROPERTY CXX_STANDARD 20)
 
 if ("${PLATFORM}" STREQUAL "Web")
-    #add_custom_command(
-    #    TARGET ${PROJECT_NAME} PRE_BUILD
-    #    COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_SOURCE_DIR}/src/resources $<TARGET_FILE_DIR:${PROJECT_NAME}>/../resources
-    #)
-    #DEPENDS ${PROJECT_NAME}
+    add_custom_command(
+        TARGET ${PROJECT_NAME} PRE_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_SOURCE_DIR}/data $<TARGET_FILE_DIR:${PROJECT_NAME}>/../data
+    )
 else ()
-    #add_custom_command(
-    #    TARGET ${PROJECT_NAME} POST_BUILD
-    #    COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_SOURCE_DIR}/src/resources $<TARGET_FILE_DIR:${PROJECT_NAME}>/resources
-    #)
-    #DEPENDS ${PROJECT_NAME}
+    add_custom_command(
+        TARGET ${PROJECT_NAME} POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_SOURCE_DIR}/data $<TARGET_FILE_DIR:${PROJECT_NAME}>/data
+    )
 endif ()
 
 #set(raylib_VERBOSE 1)
@@ -72,7 +70,7 @@ target_link_libraries(${PROJECT_NAME} raylib_cpp)
 # Web Configurations
 if ("${PLATFORM}" STREQUAL "Web")
     set_target_properties(${PROJECT_NAME} PROPERTIES SUFFIX ".html")
-    target_link_options(${PROJECT_NAME} PUBLIC -sUSE_GLFW=3 PUBLIC --preload-file resources)
+    target_link_options(${PROJECT_NAME} PUBLIC -sUSE_GLFW=3 PUBLIC --preload-file data)
 endif ()
 
 # Checks if OSX and links appropriate frameworks (Only required on MacOS)
