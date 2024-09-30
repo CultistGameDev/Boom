@@ -1,8 +1,5 @@
 #include <raylib-cpp.hpp>
 
-// Get float value from text
-// NOTE: This function replaces atof() [stdlib.h]
-// WARNING: Only '.' character is understood as decimal poi
 static float TextToFloat(const char *text) {
     float value = 0.0f;
     float sign = 1.0f;
@@ -55,8 +52,6 @@ int main(int argc, char **argv) {
 
     const BH::Text text("Hello World!", screenWidth / 2, screenHeight / 2, 32);
 
-    DisableCursor();
-
     raylib::Camera3D camera;
     camera.SetPosition(Vector3(5, 5, 5));
     camera.SetTarget(Vector3(0, 0, 0));
@@ -65,7 +60,7 @@ int main(int argc, char **argv) {
     camera.SetProjection(CameraProjection::CAMERA_PERSPECTIVE);
 
     while (!window->ShouldClose()) {
-        UpdateCamera(&camera, CameraMode::CAMERA_CUSTOM);
+        // UpdateCamera(&camera, CameraMode::CAMERA_CUSTOM);
 
         window->BeginDrawing();
         window->ClearBackground(WHITE);
