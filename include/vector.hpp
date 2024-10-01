@@ -28,7 +28,7 @@ class Vec {
         return m_Values[i];
     }
 
-    T *Data() noexcept { return m_Values.data(); }
+    const T *Data() const noexcept { return m_Values.data(); }
 
   protected:
     std::array<T, N> m_Values;
@@ -45,6 +45,8 @@ template <typename T> class Vec2 : public Vec<T, 2> {
     T X(T value) { return this->m_Values[0] = value; }
     T Y(T value) { return this->m_Values[1] = value; }
 
+    [[nodiscard]] Vector2 ToVector2() const { return Vector2{X(), Y()}; }
+
     [[nodiscard]] T R() const { return this->m_Values[0]; }
     [[nodiscard]] T G() const { return this->m_Values[1]; }
     T R(T value) { return this->m_Values[0] = value; }
@@ -60,6 +62,9 @@ template <typename T> class Vec3 : public Vec<T, 3> {
     Vec<T, 2>&& ToVec2() const { return Vec<T, 2>{X(), Y()}; }
 
     static Vec<T, 3>& Zero() { return Vec<T, 3>(); }
+
+    [[nodiscard]] Vector3 ToVector2() const { return Vector3{X(), Y()}; }
+    [[nodiscard]] Vector3 ToVector3() const { return Vector3{X(), Y(), Z()}; }
 
     [[nodiscard]] T X() const { return this->m_Values[0]; }
     [[nodiscard]] T Y() const { return this->m_Values[1]; }
@@ -84,6 +89,12 @@ template <typename T> class Vec4 : public Vec<T, 4> {
 
     Vec<T, 2>&& ToVec2() const { return Vec<T, 2>{X(), Y()}; }
     Vec<T, 3>&& ToVec3() const { return Vec<T, 2>{X(), Y(), Z()}; }
+
+    [[nodiscard]] Vector4 ToVector2() const { return Vector4{X(), Y()}; }
+    [[nodiscard]] Vector4 ToVector3() const { return Vector4{X(), Y(), Z()}; }
+    [[nodiscard]] Vector4 ToVector4() const {
+        return Vector4{X(), Y(), Z(), W()};
+    }
 
     [[nodiscard]] T X() const { return this->m_Values[0]; }
     [[nodiscard]] T Y() const { return this->m_Values[1]; }
