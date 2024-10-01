@@ -13,9 +13,11 @@ uniform vec4 colDiffuse;
 // Output fragment color
 out vec4 finalColor;
 
-#define MAX_LIGHTS 4
-#define LIGHT_DIRECTIONAL 0
-#define LIGHT_POINT 1
+// NOTE: Add here your custom variables
+
+#define     MAX_LIGHTS              4
+#define     LIGHT_DIRECTIONAL       0
+#define     LIGHT_POINT             1
 
 struct Light {
     int enabled;
@@ -25,11 +27,13 @@ struct Light {
     vec4 color;
 };
 
+// Input lighting values
 uniform Light lights[MAX_LIGHTS];
 uniform vec4 ambient;
 uniform vec3 viewPos;
 
-void main() {
+void main()
+{
     // Texel color fetching from texture sampler
     vec4 texelColor = texture(texture0, fragTexCoord);
     vec3 lightDot = vec3(0.0);
@@ -62,8 +66,8 @@ void main() {
         }
     }
 
-    finalColor = (texelColor * ((colDiffuse + vec4(specular, 1.0)) * vec4(lightDot, 1.0)));
-    finalColor *= (ambient / 2.0) * colDiffuse;
+    finalColor = ((colDiffuse + vec4(specular, 1.0)) * vec4(lightDot, 1.0));
+    finalColor += (ambient / 10.0) * colDiffuse;
 
     // Gamma correction
     finalColor = pow(finalColor, vec4(1.0 / 2.2));

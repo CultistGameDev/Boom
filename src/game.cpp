@@ -1,4 +1,4 @@
-#include <array>
+#include <iostream>
 
 #include <raylib-cpp.hpp>
 
@@ -54,7 +54,6 @@ int main(int argc, char **argv) {
 #if defined(PLATFORM_WEB)
     emscripten_set_main_loop(UpdateDrawFrame, 0, 1);
 #else
-    SetTargetFPS(60);
 
     BH::Vec2f v(0.1f, 1.2f);
     v.X(2.4f);
@@ -66,7 +65,7 @@ int main(int argc, char **argv) {
     camera.SetFovy(45);
     camera.SetProjection(CameraProjection::CAMERA_PERSPECTIVE);
 
-    BH::Colorf ambient{0.1f, 0.1f, 0.1f, 1.0f};
+    BH::Color4f ambient{0.1f, 0.1f, 0.1f, 1.0f};
 
     const Shader& shader =
         LoadShader("data/shaders/lighting.vert", "data/shaders/lighting.frag");
@@ -76,32 +75,30 @@ int main(int argc, char **argv) {
     SetShaderValue(shader, ambientLoc, ambient.Data(), SHADER_UNIFORM_VEC4);
     std::vector<BH::Light> lights;
     lights.reserve(4);
-    lights.emplace_back(BH::LightType::LIGHT_POINT,
-                        BH::Vec3f{-2.0f, 1.0f, -2.0f}, BH::Vec3f(),
-                        BH::Colori{253, 249, 0, 255}, shader);
-    lights.emplace_back(BH::LightType::LIGHT_POINT, BH::Vec3f{2.0f, 1.0f, 2.0f},
-                        BH::Vec3f(), BH::Colori{253, 249, 0, 255}, shader);
-    lights.emplace_back(BH::LightType::LIGHT_POINT, BH::Vec3f{2.0f, 1.0f, 2.0f},
-                        BH::Vec3f(), BH::Colori{230, 41, 55, 255}, shader);
-    lights.emplace_back(BH::LightType::LIGHT_POINT,
-                        BH::Vec3f{-2.0f, 1.0f, 2.0f}, BH::Vec3f(),
-                        BH::Colori{41, 230, 55, 255}, shader);
+    lights.emplace_back(BH::LightType::LIGHT_POINT, BH::Vec3f{-2, 1, -2},
+                        BH::Vec3f(), BH::Color4i{253, 249, 0, 255}, shader);
+    lights.emplace_back(BH::LightType::LIGHT_POINT, BH::Vec3f{2, 1, 2},
+                        BH::Vec3f(), BH::Color4i{253, 249, 0, 255}, shader);
+    lights.emplace_back(BH::LightType::LIGHT_POINT, BH::Vec3f{-2, 1, 2},
+                        BH::Vec3f(), BH::Color4i{230, 41, 55, 255}, shader);
+    lights.emplace_back(BH::LightType::LIGHT_POINT, BH::Vec3f{2, 1, -2},
+                        BH::Vec3f(), BH::Color4i{41, 230, 55, 255}, shader);
 
     bool showMessageBox = true;
 
-    for (int i = 0; i < 4; i++) {
-        lights[i].Update(shader);
-    }
+    SetTargetFPS(60);
 
     while (!window->ShouldClose()) {
-        if (!showMessageBox) {
-            UpdateCamera(&camera, CameraMode::CAMERA_CUSTOM);
-        }
+        UpdateCamera(&camera, CameraMode::CAMERA_ORBITAL);
 
         BH::Vec3f cameraPos{camera.position.x, camera.position.y,
                             camera.position.z};
         SetShaderValue(shader, shader.locs[SHADER_LOC_VECTOR_VIEW],
                        cameraPos.Data(), SHADER_UNIFORM_VEC3);
+
+        for (const BH::Light& light : lights) {
+            light.Update(shader);
+        }
 
         window->BeginDrawing();
         window->ClearBackground(WHITE);
@@ -111,16 +108,28 @@ int main(int argc, char **argv) {
         DrawPlane(Vector3Zero(), (Vector2){10.0, 10.0}, WHITE);
         DrawCube(Vector3Zero(), 2.0, 4.0, 2.0, WHITE);
         EndShaderMode();
-        EndMode3D();
-
-        if (showMessageBox) {
-            if (GuiMessageBox((Rectangle){85, 70, 250.0f, 100.0f},
-                              "#191#Message Box", "Hi! This is a message!",
-                              "Nice;Cool") >= 0) {
-                showMessageBox = false;
-                DisableCursor();
+        for (int i = 0; i < 4; i++) {
+            const BH::Light& light = lights[i];
+            if (lights[i].enabled) {
+                DrawSphereEx(light.position.ToVector3(), 0.2f, 8, 8,
+                             (Color){(unsigned char)light.color.R(),
+                                     (unsigned char)light.color.G(),
+                                     (unsigned char)light.color.B(),
+                                     (unsigned char)light.color.A()});
+            } else {
+                DrawSphereWires(
+                    light.position.ToVector3(), 0.2f, 8, 8,
+                    ColorAlpha((Color){(unsigned char)light.color.R(),
+                                       (unsigned char)light.color.G(),
+                                       (unsigned char)light.color.B(),
+                                       (unsigned char)light.color.A()},
+                               0.3));
             }
         }
+
+        DrawGrid(10, 1.0f);
+
+        EndMode3D();
 
         window->EndDrawing();
     }
