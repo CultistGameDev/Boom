@@ -40,6 +40,8 @@ static float TextToFloat(const char *text) {
 #include <emscripten/emscripten.h>
 #endif
 
+#include "color.hpp"
+#include "light.hpp"
 #include "vector.hpp"
 
 constexpr int screenWidth = 800;
@@ -58,34 +60,56 @@ int main(int argc, char **argv) {
     v.X(2.4f);
 
     raylib::Camera3D camera;
-    camera.SetPosition(Vector3(5, 5, 5));
-    camera.SetTarget(Vector3(0, 0, 0));
-    camera.SetUp(Vector3(0, 1, 0));
-    camera.SetFovy(90);
+    camera.SetPosition(Vector3(2.0f, 4.0f, 6.0f));
+    camera.SetTarget(Vector3(0.0f, 0.5f, 0.0f));
+    camera.SetUp(Vector3(0.0f, 1.0f, 0.0f));
+    camera.SetFovy(45);
     camera.SetProjection(CameraProjection::CAMERA_PERSPECTIVE);
 
-    std::array<float, 4> ambient{0.1f, 0.1f, 0.1f, 1.0f};
+    BH::Colorf ambient{0.1f, 0.1f, 0.1f, 1.0f};
 
-    Shader shader =
+    const Shader& shader =
         LoadShader("data/shaders/lighting.vert", "data/shaders/lighting.frag");
+    shader.locs[SHADER_LOC_VECTOR_VIEW] = GetShaderLocation(shader, "viewPos");
+
     int ambientLoc = GetShaderLocation(shader, "ambient");
-    SetShaderValue(shader, ambientLoc, ambient.data(), SHADER_UNIFORM_VEC4);
+    SetShaderValue(shader, ambientLoc, ambient.Data(), SHADER_UNIFORM_VEC4);
+    std::vector<BH::Light> lights;
+    lights.reserve(4);
+    lights.emplace_back(BH::LightType::LIGHT_POINT,
+                        BH::Vec3f{-2.0f, 1.0f, -2.0f}, BH::Vec3f(),
+                        BH::Colori{253, 249, 0, 255}, shader);
+    lights.emplace_back(BH::LightType::LIGHT_POINT, BH::Vec3f{2.0f, 1.0f, 2.0f},
+                        BH::Vec3f(), BH::Colori{253, 249, 0, 255}, shader);
+    lights.emplace_back(BH::LightType::LIGHT_POINT, BH::Vec3f{2.0f, 1.0f, 2.0f},
+                        BH::Vec3f(), BH::Colori{230, 41, 55, 255}, shader);
+    lights.emplace_back(BH::LightType::LIGHT_POINT,
+                        BH::Vec3f{-2.0f, 1.0f, 2.0f}, BH::Vec3f(),
+                        BH::Colori{41, 230, 55, 255}, shader);
 
     bool showMessageBox = true;
+
+    for (int i = 0; i < 4; i++) {
+        lights[i].Update(shader);
+    }
 
     while (!window->ShouldClose()) {
         if (!showMessageBox) {
             UpdateCamera(&camera, CameraMode::CAMERA_CUSTOM);
         }
 
+        BH::Vec3f cameraPos{camera.position.x, camera.position.y,
+                            camera.position.z};
+        SetShaderValue(shader, shader.locs[SHADER_LOC_VECTOR_VIEW],
+                       cameraPos.Data(), SHADER_UNIFORM_VEC3);
+
         window->BeginDrawing();
         window->ClearBackground(WHITE);
 
         BeginMode3D(camera);
         BeginShaderMode(shader);
-        DrawCube(Vector3(0, -10, 0), 20, 1, 20, BLUE);
-        DrawCube(Vector3(3, -4, -2), 2, 2, 2, GREEN);
-        DrawCube(Vector3(-2, -4, 0), 1, 1, 1, RED);
+        DrawPlane(Vector3Zero(), (Vector2){10.0, 10.0}, WHITE);
+        DrawCube(Vector3Zero(), 2.0, 4.0, 2.0, WHITE);
         EndShaderMode();
         EndMode3D();
 
@@ -97,8 +121,6 @@ int main(int argc, char **argv) {
                 DisableCursor();
             }
         }
-
-        DrawText(TextFormat("%.1f %.1f", v.X(), v.Y()), 0, 0, 32, BLACK);
 
         window->EndDrawing();
     }

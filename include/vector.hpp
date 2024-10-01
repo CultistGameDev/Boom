@@ -3,14 +3,15 @@
 
 #include <array>
 #include <cassert>
-#include <cstdint>
+#include <concepts>
 
 namespace BH {
-template <typename T, size_t N> class Vec {
+template <typename T, size_t N>
+    requires(N > 0 && (std::integral<T> || std::floating_point<T>))
+class Vec {
   public:
     Vec() { static_assert(N > 0); }
     Vec(std::initializer_list<T> values) {
-        static_assert(N > 0);
         assert(values.size() == N);
 
         int i = 0;
@@ -56,6 +57,10 @@ template <typename T> class Vec3 : public Vec<T, 3> {
     Vec3(T x, T y, T z) : Vec<T, 3>({x, y, z}) {}
     Vec3(std::initializer_list<T> values) : Vec<T, 3>(values) {}
 
+    Vec<T, 2>&& ToVec2() const { return Vec<T, 2>{X(), Y()}; }
+
+    static Vec<T, 3>& Zero() { return Vec<T, 3>(); }
+
     [[nodiscard]] T X() const { return this->m_Values[0]; }
     [[nodiscard]] T Y() const { return this->m_Values[1]; }
     [[nodiscard]] T Z() const { return this->m_Values[2]; }
@@ -76,6 +81,9 @@ template <typename T> class Vec4 : public Vec<T, 4> {
     Vec4() : Vec<T, 4>() {}
     Vec4(T x, T y, T z, T w) : Vec<T, 4>({x, y, z, w}) {}
     Vec4(std::initializer_list<T> values) : Vec<T, 4>(values) {}
+
+    Vec<T, 2>&& ToVec2() const { return Vec<T, 2>{X(), Y()}; }
+    Vec<T, 3>&& ToVec3() const { return Vec<T, 2>{X(), Y(), Z()}; }
 
     [[nodiscard]] T X() const { return this->m_Values[0]; }
     [[nodiscard]] T Y() const { return this->m_Values[1]; }

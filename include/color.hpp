@@ -4,7 +4,8 @@
 #include "vector.hpp"
 
 namespace BH {
-using Color = Vec4f;
-}
+using Colorf = Vec4f;
+using Colori = Vec4i;
+} // namespace BH
 
 #endif // BOOMHEADSHOT_COLOR_HPP
