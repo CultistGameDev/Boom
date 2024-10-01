@@ -10,7 +10,7 @@ template <typename T, size_t N>
     requires(N > 0 && (std::integral<T> || std::floating_point<T>))
 class Vec {
   public:
-    Vec() { static_assert(N > 0); }
+    Vec() = default;
     Vec(std::initializer_list<T> values) {
         assert(values.size() == N);
 
@@ -44,8 +44,6 @@ template <typename T> class Vec2 : public Vec<T, 2> {
     [[nodiscard]] T Y() const { return this->m_Values[1]; }
     T X(T value) { return this->m_Values[0] = value; }
     T Y(T value) { return this->m_Values[1] = value; }
-
-    [[nodiscard]] Vector2 ToVector2() const { return Vector2{X(), Y()}; }
 
     [[nodiscard]] T R() const { return this->m_Values[0]; }
     [[nodiscard]] T G() const { return this->m_Values[1]; }
@@ -89,12 +87,6 @@ template <typename T> class Vec4 : public Vec<T, 4> {
 
     Vec<T, 2>&& ToVec2() const { return Vec<T, 2>{X(), Y()}; }
     Vec<T, 3>&& ToVec3() const { return Vec<T, 2>{X(), Y(), Z()}; }
-
-    [[nodiscard]] Vector4 ToVector2() const { return Vector4{X(), Y()}; }
-    [[nodiscard]] Vector4 ToVector3() const { return Vector4{X(), Y(), Z()}; }
-    [[nodiscard]] Vector4 ToVector4() const {
-        return Vector4{X(), Y(), Z(), W()};
-    }
 
     [[nodiscard]] T X() const { return this->m_Values[0]; }
     [[nodiscard]] T Y() const { return this->m_Values[1]; }
