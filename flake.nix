@@ -17,8 +17,6 @@
       devShells = forEachSupportedSystem ({ pkgs }: {
   	nativeBuildInputs = with pkgs; [
 	    pkg-config
-	    cmake
-	    gnumake
 	    clang
 	    clang-tools
 
@@ -34,7 +32,9 @@
 	  }
 	  {
 	  packages = with pkgs; [
-	     glfw
+      cmake
+      gnumake
+	    glfw
 	  ] ++ (if system == "aarch64-darwiu" then [] else [gdb]);
 	  };
       });
