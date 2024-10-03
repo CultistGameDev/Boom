@@ -1,13 +1,24 @@
-cmake_minimum_required(VERSION 3.12)
-project(BoomHeadshot)
+cmake_minimum_required(VERSION 3.29.6)
 
-# Generate compile_commands.json
-set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+project(BoomHeadshot
+  LANGUAGES CXX
+  VERSION 0.0.1)
 
+set(CMAKE_POLICY_DEFAULT_CMP0077 NEW)
+
+add_subdirectory(external)
+
+find_package(Vulkan REQUIRED)
+find_package(glm REQUIRED)
 # Our Project
 add_executable(${PROJECT_NAME})
-target_include_directories(${PROJECT_NAME} PRIVATE include)
 add_subdirectory(src)
+
+include_directories(include ${GLFW3_INCLUDE_DIR} ${GLM_INCLUDE_DIR}
+  ${Vulkan_INCLUDE_DIRS})
+target_include_directories(${PROJECT_NAME} PRIVATE
+  include ${GLWF3_INCLUDE_DIR} ${glm_INCLUDE_DIR}
+  ${Vulkan_INCLUDE_DIRS})
 
 set_target_properties(${PROJECT_NAME} PROPERTIES
         RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/${PROJECT_NAME})
@@ -25,6 +36,8 @@ else ()
         COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_SOURCE_DIR}/data $<TARGET_FILE_DIR:${PROJECT_NAME}>/data
     )
 endif ()
+
+target_link_libraries(${PROJECT_NAME} PRIVATE glfw Vulkan::Vulkan)
 
 # Web Configurations
 if ("${PLATFORM}" STREQUAL "Web")
