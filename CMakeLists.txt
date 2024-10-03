@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.29.6)
+cmake_minimum_required(VERSION 3.28)
 
 project(BoomHeadshot
   LANGUAGES CXX
@@ -6,18 +6,19 @@ project(BoomHeadshot
 
 set(CMAKE_POLICY_DEFAULT_CMP0077 NEW)
 
-add_subdirectory(external)
+list(APPEND CMAKE_MODULE_PATH cmake/)
 
 find_package(Vulkan REQUIRED)
-find_package(glm REQUIRED)
+find_package(GLM REQUIRED)
+find_package(GLFW REQUIRED)
 # Our Project
 add_executable(${PROJECT_NAME})
 add_subdirectory(src)
 
-include_directories(include ${GLFW3_INCLUDE_DIR} ${GLM_INCLUDE_DIR}
+include_directories(include ${GLFW_INCLUDE_DIR} ${GLM_INCLUDE_DIR}
   ${Vulkan_INCLUDE_DIRS})
 target_include_directories(${PROJECT_NAME} PRIVATE
-  include ${GLWF3_INCLUDE_DIR} ${glm_INCLUDE_DIR}
+  include ${GLWF3_INCLUDE_DIR} ${GLM_INCLUDE_DIR}
   ${Vulkan_INCLUDE_DIRS})
 
 set_target_properties(${PROJECT_NAME} PROPERTIES
