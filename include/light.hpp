@@ -11,23 +11,23 @@ enum class LightType { LIGHT_DIRECTIONAL = 0, LIGHT_POINT };
 
 // Light data
 class Light {
-  public:
-    Light(LightType type, Vec3f position, Vec3f target, Color4i color);
-    void Update() const;
+public:
+  Light(LightType type, Vec3f position, Vec3f target, Color4i color);
+  void Update() const;
 
-    LightType type;
-    bool enabled;
-    Vec3f position;
-    Vec3f target;
-    Color4i color;
-    float attenuation;
+  LightType type;
+  bool enabled;
+  Vec3f position;
+  Vec3f target;
+  Color4i color;
+  float attenuation;
 
-    int enabledLoc = 0;
-    int typeLoc = 0;
-    int positionLoc = 0;
-    int targetLoc = 0;
-    int colorLoc = 0;
-    int attenuationLoc = 0;
+  int enabledLoc = 0;
+  int typeLoc = 0;
+  int positionLoc = 0;
+  int targetLoc = 0;
+  int colorLoc = 0;
+  int attenuationLoc = 0;
 };
 
 } // namespace BH
