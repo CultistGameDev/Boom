@@ -1,7 +1,3 @@
-#if defined(PLATFORM_WEB)
-#include <emscripten/emscripten.h>
-#endif
-
 #define GLFW_INCLUDE_VULKAN
 #include <GLFW/glfw3.h>
 
@@ -16,9 +12,6 @@ constexpr int screenWidth = 800;
 constexpr int screenHeight = 450;
 
 int main(int argc, char **argv) {
-#if defined(PLATFORM_WEB)
-    emscripten_set_main_loop(UpdateDrawFrame, 0, 1);
-#else
     glfwInit();
     glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
     GLFWwindow *window =
@@ -39,7 +32,6 @@ int main(int argc, char **argv) {
 
     glfwDestroyWindow(window);
     glfwTerminate();
-#endif
 
     return 0;
 }
