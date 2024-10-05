@@ -1,17 +1,17 @@
 cmake_minimum_required(VERSION 3.28)
 
-project(BoomHeadshot
+project(Boom
   LANGUAGES CXX
   VERSION 0.0.1)
 
 set(CMAKE_POLICY_DEFAULT_CMP0077 NEW)
 
-list(APPEND CMAKE_MODULE_PATH cmake/)
+list(APPEND CMAKE_MODULE_PATH cmake)
 
 find_package(Vulkan REQUIRED)
 find_package(GLM REQUIRED)
 find_package(GLFW REQUIRED)
-# Our Project
+
 add_executable(${PROJECT_NAME})
 add_subdirectory(src)
 
