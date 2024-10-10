@@ -70,3 +70,5 @@ compile_commands.json
 *apk*
 android.*
 cmake-build-debug
+
+vcpkg_installed
