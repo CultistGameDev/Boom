@@ -1,7 +1,0 @@
-{
-  "dependencies": [
-    "vulkan-sdk-components",
-    "glfw3",
-    "glm"
-  ]
-}
